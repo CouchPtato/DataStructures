@@ -163,7 +163,7 @@ void SLL:: concatenateSLL(SLL& list)
 }
 
 int main() {
-    SLL sll;
+    SLL sll, list2;
     int choice;
     int num;
     int loc;
@@ -218,7 +218,15 @@ int main() {
                 sll.searchElement(loc);
                 break;
             case 8:
-                SLL list2;
+                cout << "Enter size of list: ";
+                int t;
+                cin >> t;
+                while(t--){
+                    cout << "Enter the number to insert: ";
+                    int num;
+                    cin >> num;
+                    sll.insertAtEnd(num);
+                }
                 sll.concatenateSLL(list2);
                 break;
             case 9:
@@ -229,9 +237,11 @@ int main() {
                 return 0;
             default:
                 cout << "Invalid choice. Please try again." << endl;
+
         }
     }
 
     return 0;
+
 }
 

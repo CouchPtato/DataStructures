@@ -1,87 +1,79 @@
-// Evaluation of Postfix
 #include <iostream>
 #include <stack>
-#include <string>
 #include <math.h>
-
+#include <string>
 using namespace std;
 
-double evaluatePostfix(const string& expression) {
+double evaluatePostfix(const string& exp)
+{
     stack<double> stack;
-    int operandCount = 0;
+    int count = 0;
 
-    for (char c : expression) {
-         
-        // When you subtract the ASCII value
-        // of '0' (which is 48) from the ASCII value
-        // of any digit character, you get the
-        // integer value of that digit.
-
-        if (isdigit(c)) {
-            stack.push(c - '0');       
-            operandCount++;
+    for (char c : exp)
+    {
+        if(isdigit(c))
+        {
+            stack.push(c - '0');
+            count++;
         }
-        
-        else if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') {
-            // Check if there are enough operands on the stack
-            if (operandCount < 2) {
-                cout << "Error: Invalid postfix expression" << endl;
+        else if(c == '+' || c == '-' || c == '*' || c == '/' || c == '^')
+        {
+            if(stack.size() < 2)
+            {
+                cout << "ERROR!!!";
                 exit(1);
             }
 
-            // Perform the operation and push the result onto the stack
-            double result = stack.top();
+            double operand2 = stack.top(); // Second operand
             stack.pop();
-            operandCount--;
+            double operand1 = stack.top(); // First operand
+            stack.pop();
 
-            while (operandCount > 0) {
-                double operand = stack.top();
-                stack.pop();
-                operandCount--;
-
-                switch (c) {
-                    case '+':
-                        result += operand;
-                        break;
-                    case '-':
-                        result -= operand;
-                        break;
-                    case '*':
-                        result *= operand;
-                        break;
-                    case '/':
-                        if (operand == 0) {
-                            cout << "Error: Division by zero" << endl;
-                            exit(1);
-                        }
-                        result /= operand;
-                        break;
-                    case '^':
-                        result = pow(result, operand);
-                        break;
-                }
+            double result = 0;
+            switch (c) {
+                case '+':
+                    result = operand1 + operand2;
+                    break;
+                case '-':
+                    result = operand1 - operand2;
+                    break;
+                case '*':
+                    result = operand1 * operand2;
+                    break;
+                case '/':
+                    if (operand2 == 0) {
+                        cout << "Error: Division by zero" << endl;
+                        exit(1);
+                    }
+                    result = operand1 / operand2;
+                    break;
+                case '^':
+                    result = pow(operand1, operand2);
+                    break;
             }
 
+            // Push the result back onto the stack
             stack.push(result);
-            operandCount = 1;
+        } else {
+            cout << "Error: Invalid character in expression" << endl;
+            exit(1);
         }
     }
-
-    if (stack.size() != 1) {
-        cout << "Error: Invalid postfix expression" << endl;
+    
+    if (stack.size() != 1)
+    {
+        cout << "Error" << endl;
         exit(1);
     }
 
     return stack.top();
 }
 
-int main() {
-    string expression;
-    cout << "Enter a postfix notation expression: ";
-    cin >> expression;
-
-    double result = evaluatePostfix(expression);
-    cout << "Result: " << result << endl;
-
+int main()
+{
+    string exp;
+    cin >> exp;
+    double result = evaluatePostfix(exp);
+    cout << result;
     return 0;
 }

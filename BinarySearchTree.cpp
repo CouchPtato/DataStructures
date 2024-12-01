@@ -1,185 +1,132 @@
-// Binary Search Tree
 #include <iostream>
-#include <queue>
-
 using namespace std;
 
-class Node
-{
+struct Node {
     int data;
-    Node *left;
-    Node *right;
-
-public:
-    Node(int d)
-    {
-        data = d;
-        left = NULL;
-        right = NULL;
-    }
-
-    friend class BST;
+    Node* left;
+    Node* right;
 };
 
-class BST
-{
-    Node *root;
+class BinarySearchTree {
+private:
+    Node* root;
+
+    Node* insert(Node* root, int x) {
+        if (!root) 
+            return new Node{x, nullptr, nullptr};
+
+        if (x < root->data)
+            root->left = insert(root->left, x);
+        else if (x > root->data)
+            root->right = insert(root->right, x);
+        return root;
+    }
+
+    Node* findMin(Node* root) {
+        while (root && root->left)
+            root = root->left;
+        return root;
+    }
+
+    Node* remove(Node* root, int x) {
+        if (!root) 
+            return nullptr;
+            
+        if (x < root->data)
+            root->left = remove(root->left, x);
+        else if (x > root->data)
+            root->right = remove(root->right, x);
+        else {
+            if (!root->left) {
+                Node* temp = root->right;
+                delete root;
+                return temp;
+            } else if (!root->right) {
+                Node* temp = root->left;
+                delete root;
+                return temp;
+            }
+            Node* temp = findMin(root->right);
+            root->data = temp->data;
+            root->right = remove(root->right, temp->data);
+        }
+        return root;
+    }
+
+    void preorder(Node* root) {
+        if (root) {
+            cout << root->data << " ";
+            preorder(root->left);
+            preorder(root->right);
+        }
+    }
+
+    void inorder(Node* root) {
+        if (root) {
+            inorder(root->left);
+            cout << root->data << " ";
+            inorder(root->right);
+        }
+    }
+
+    void postorder(Node* root) {
+        if (root) {
+            postorder(root->left);
+            postorder(root->right);
+            cout << root->data << " ";
+        }
+    }
+
+    Node* search(Node* root, int x) {
+        if (!root || root->data == x) return root;
+        if (x < root->data)
+            return search(root->left, x);
+        return search(root->right, x);
+    }
 
 public:
-    BST()
-    {
-        root = NULL;
+    BinarySearchTree() : root(nullptr) {}
+
+    void insert(int x) {
+        root = insert(root, x);
     }
 
-    Node *insert(Node *node, int data)
-    {
-        if (node == NULL)
-        {
-            return new Node(data);
-        }
-
-        if (data < node->data)
-        {
-            node->left = insert(node->left, data);
-        }
-        else if (data > node->data)
-        {
-            node->right = insert(node->right, data);
-        }
-        return node;
+    void remove(int x) {
+        root = remove(root, x);
     }
 
-    void insert(int data)
-    {
-        root = insert(root, data);
+    Node* search(int x) {
+        return search(root, x);
     }
 
-    void preorder(Node *node)
-    {
-        if (node != NULL)
-        {
-            cout << node->data << " ";
-            preorder(node->left);
-            preorder(node->right);
-        }
-    }
-
-    void postorder(Node *node)
-    {
-        if (node != NULL)
-        {
-            postorder(node->left);
-            postorder(node->right);
-            cout << node->data << " ";
-        }
-    }
-
-    void inorder(Node *node)
-    {
-        if (node != NULL)
-        {
-            inorder(node->left);
-            cout << node->data << " ";
-            inorder(node->right);
-        }
-    }
-
-    void bfs_traversal(Node *node)
-    {
-        if (node == NULL)
-        {
-            return;
-        }
-
-        queue<Node *> q;
-        q.push(node);
-
-        while (!q.empty())
-        {
-            Node *current = q.front();
-            cout << current->data << " ";
-            q.pop();
-            if (current->left != NULL)
-            {
-                q.push(current->left);
-            }
-            if (current->right != NULL)
-            {
-                q.push(current->right);
-            }
-        }
-    }
-
-    void preorder_traversal()
-    {
-        cout << "Preorder traversal: ";
+    void display() {
+        cout << "Inorder: ";
+        inorder(root);
+        cout << "\nPreorder: ";
         preorder(root);
-        cout << endl;
-    }
-
-    void postorder_traversal()
-    {
-        cout << "Postorder traversal: ";
+        cout << "\nPostorder: ";
         postorder(root);
         cout << endl;
     }
-
-    void inorder_traversal()
-    {
-        cout << "Inorder traversal: ";
-        inorder(root);
-        cout << endl;
-    }
-
-    void bfs_traversal()
-    {
-        cout << "Breadth-First traversal: ";
-        bfs_traversal(root);
-        cout << endl;
-    }
 };
 
-int main()
-{
-    BST bst;
-    int choice, data;
+int main() {
+    BinarySearchTree bst;
+    bst.insert(50);
+    bst.insert(30);
+    bst.insert(70);
+    bst.insert(20);
+    bst.insert(40);
+    bst.insert(60);
+    bst.insert(80);
 
-    while (true)
-    {
-        cout << "\nMenu:\n";
-        cout << "1. Insert\n";
-        cout << "2. Preorder Traversal\n";
-        cout << "3. Postorder Traversal\n";
-        cout << "4. Inorder Traversal\n";
-        cout << "5. BFS Traversal\n";
-        cout << "6. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
+    bst.display();
 
-        switch (choice)
-        {
-        case 1:
-            cout << "Enter data to insert: ";
-            cin >> data;
-            bst.insert(data);
-            break;
-        case 2:
-            bst.preorder_traversal();
-            break;
-        case 3:
-            bst.postorder_traversal();
-            break;
-        case 4:
-            bst.inorder_traversal();
-            break;
-        case 5:
-            bst.bfs_traversal();
-            break;
-        case 6:
-            cout << "Exiting...\n";
-            return 0;
-        default:
-            cout << "Invalid choice. Please try again.\n";
-        }
-    }
+    bst.remove(50);
+    bst.display();
+
+    Node* found = bst.search(60);
+    cout << (found ? "Found\n" : "Not Found\n");
+
+    return 0;
 }
